@@ -27,6 +27,7 @@ class User extends Authenticatable
         'foto_ktp',
         'jam_masuk_shift',
         'jam_keluar_shift',
+        'hari_libur',
     ];
 
     /**
@@ -61,5 +62,11 @@ class User extends Authenticatable
     public function gaji()
     {
         return $this->hasMany(Gaji::class);
+    }
+
+    // Satu User bisa punya BANYAK pengajuan Izin
+    public function izins()
+    {
+        return $this->hasMany(Izin::class);
     }
 }

@@ -60,9 +60,9 @@
                         {{-- Shift --}}
 
                         <div class="sm:col-span-2 bg-gray-50 p-4 rounded-md border border-gray-200">
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Shift Kerja</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Jadwal & Shift Kerja</label>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <label class="text-xs text-gray-500">Jam Masuk</label>
                                     <input type="time" name="jam_masuk_shift" required
@@ -73,6 +73,21 @@
                                     <label class="text-xs text-gray-500">Jam Pulang</label>
                                     <input type="time" name="jam_keluar_shift" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label class="text-xs text-gray-500">Hari Libur Mingguan</label>
+                                    <select name="hari_libur"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="">-- Pilih Hari Libur --</option>
+                                        <option value="Senin">Senin</option>
+                                        <option value="Selasa">Selasa</option>
+                                        <option value="Rabu">Rabu</option>
+                                        <option value="Kamis">Kamis</option>
+                                        <option value="Jumat">Jumat</option>
+                                        <option value="Sabtu">Sabtu</option>
+                                        <option value="Minggu">Minggu</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

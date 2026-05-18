@@ -58,6 +58,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // 3. Proses Update - Menyimpan perubahan ke database
     Route::put('/pengaturan', [AdminController::class, 'updatePengaturan'])->name('pengaturan.update');
+
+    // Izin (Admin)
+    Route::get('/izin', [App\Http\Controllers\IzinController::class, 'indexAdmin'])->name('izin.index');
+    Route::post('/izin/{id}/terima', [App\Http\Controllers\IzinController::class, 'terimaAdmin'])->name('izin.terima');
+    Route::post('/izin/{id}/tolak', [App\Http\Controllers\IzinController::class, 'tolakAdmin'])->name('izin.tolak');
 });
 
 // --- GROUP 2: KHUSUS KARYAWAN ---
@@ -75,6 +80,11 @@ Route::middleware(['auth'])->prefix('absensi')->name('absensi.')->group(function
     //gaji karyawan
     Route::get('/gaji-saya', [GajiController::class, 'riwayatGaji'])->name('gaji.history');
     Route::get('/gaji-saya/cetak/{id}', [GajiController::class, 'cetakSlipKaryawan'])->name('gaji.cetak');
+
+    // Izin (Karyawan)
+    Route::get('/izin', [App\Http\Controllers\IzinController::class, 'indexKaryawan'])->name('izin.index');
+    Route::get('/izin/create', [App\Http\Controllers\IzinController::class, 'createKaryawan'])->name('izin.create');
+    Route::post('/izin', [App\Http\Controllers\IzinController::class, 'storeKaryawan'])->name('izin.store');
 });
 
 

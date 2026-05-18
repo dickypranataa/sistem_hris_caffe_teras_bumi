@@ -135,6 +135,11 @@
             <tr>
                 <td class="label">ID Transaksi</td>
                 <td>: #PAY-{{ $gaji->id }}{{ $gaji->bulan }}{{ $gaji->tahun }}</td>
+                <td class="label">Total Izin</td>
+                <td>: {{ $gaji->total_izin }} Hari</td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
                 <td class="label">Tanggal Cetak</td>
                 <td>: {{ \Carbon\Carbon::parse($gaji->tanggal_dicetak)->translatedFormat('d F Y') }}</td>
             </tr>

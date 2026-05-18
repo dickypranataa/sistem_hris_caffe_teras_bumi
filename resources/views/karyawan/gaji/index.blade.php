@@ -50,7 +50,8 @@
                             <div class="mt-4 border-t border-gray-200 pt-3 flex justify-between items-center">
                                 <div class="text-xs text-gray-500">
                                     Hadir: <span class="font-bold text-gray-700">{{ $gaji->total_hadir }}</span> |
-                                    Telat: <span class="font-bold text-red-600">{{ $gaji->total_terlambat }}</span>
+                                    Telat: <span class="font-bold text-red-600">{{ $gaji->total_terlambat }}</span> |
+                                    Izin: <span class="font-bold text-purple-600">{{ $gaji->total_izin }}</span>
                                 </div>
 
                                 <a href="{{ route('absensi.gaji.cetak', $gaji->id) }}" target="_blank"

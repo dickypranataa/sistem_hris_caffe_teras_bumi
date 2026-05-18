@@ -46,7 +46,31 @@
                 <div class="p-6">
 
                     {{-- LOGIKA TAMPILAN TOMBOL --}}
-                    @if($cekAbsen && $cekAbsen->jam_keluar)
+                    @if(isset($isIzin) && $isIzin)
+                    {{-- KONDISI 0.5: IZIN DITERIMA --}}
+                    <div class="text-center py-10">
+                        <div class="mb-4 text-purple-500">
+                            <svg class="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Izin Anda Disetujui!</h3>
+                        <p class="text-gray-500">Anda sedang dalam masa izin yang telah disetujui. Tidak perlu melakukan absensi hari ini.</p>
+                    </div>
+
+                    @elseif($isHariLibur)
+                    {{-- KONDISI 0: HARI LIBUR --}}
+                    <div class="text-center py-10">
+                        <div class="mb-4 text-blue-500">
+                            <svg class="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Hari Libur Anda!</h3>
+                        <p class="text-gray-500">Selamat beristirahat. Anda tidak perlu melakukan absensi hari ini.</p>
+                    </div>
+
+                    @elseif($cekAbsen && $cekAbsen->jam_keluar)
                     {{-- KONDISI 1: SUDAH SELESAI KERJA --}}
                     <div class="text-center py-10">
                         <div class="mb-4 text-green-500">

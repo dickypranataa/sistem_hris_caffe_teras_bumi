@@ -13,19 +13,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Nama Lengkap
+            $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
             // --- TAMBAHAN KHUSUS HRIS CAFE ---
             $table->enum('role', ['manajer', 'karyawan'])->default('karyawan');
-            $table->string('jabatan')->nullable(); // Barista, Kitchen, dll
+            
+            $table->string('jabatan')->nullable();
             $table->string('foto_ktp')->nullable();
 
             // PENGATURAN SHIFT (Time Window)
-            $table->time('jam_masuk_shift')->nullable(); // Contoh: 09:00:00
-            $table->time('jam_keluar_shift')->nullable(); // Contoh: 16:00:00
+            $table->time('jam_masuk_shift')->nullable();
+            $table->time('jam_keluar_shift')->nullable();
+            $table->string('hari_libur')->nullable();
             // ---------------------------------
 
             $table->rememberToken();

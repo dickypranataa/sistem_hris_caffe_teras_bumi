@@ -5,25 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Gaji extends Model
+class Izin extends Model
 {
     use HasFactory;
 
-    protected $table = 'gaji';
-
     protected $fillable = [
         'user_id',
-        'bulan',
-        'tahun',
-        'total_hadir',
-        'total_terlambat',
-        'total_izin',
-        'gaji_bersih',
-        'catatan',
-        'tanggal_dicetak'
+        'tanggal_izin',
+        'file_surat',
+        'status',
     ];
 
-    // Relasi ke User (Gaji ini punya siapa?)
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -54,6 +54,7 @@ class AdminController extends Controller
             'jabatan' => 'required',
             'jam_masuk_shift' => 'required',
             'jam_keluar_shift' => 'required',
+            'hari_libur' => 'nullable|string',
             'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi Foto
         ]);
 
@@ -71,6 +72,7 @@ class AdminController extends Controller
             'jabatan' => $request->jabatan,
             'jam_masuk_shift' => $request->jam_masuk_shift,
             'jam_keluar_shift' => $request->jam_keluar_shift,
+            'hari_libur' => $request->hari_libur,
             'foto_ktp' => $fotoPath,
         ]);
 
@@ -95,6 +97,7 @@ class AdminController extends Controller
             'jabatan' => 'required',
             'jam_masuk_shift' => 'required',
             'jam_keluar_shift' => 'required',
+            'hari_libur' => 'nullable|string',
             'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -105,6 +108,7 @@ class AdminController extends Controller
             'jabatan' => $request->jabatan,
             'jam_masuk_shift' => $request->jam_masuk_shift,
             'jam_keluar_shift' => $request->jam_keluar_shift,
+            'hari_libur' => $request->hari_libur,
         ];
 
         // Cek jika password diisi (Ganti password)

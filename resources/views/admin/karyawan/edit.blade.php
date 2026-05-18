@@ -68,9 +68,9 @@
 
                         {{-- SHIFT --}}
                         <div>
-                            <h4 class="text-sm font-medium text-gray-700">Shift Kerja</h4>
+                            <h4 class="text-sm font-medium text-gray-700">Jadwal & Shift Kerja</h4>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
 
                                 {{-- jam masuk --}}
                                 <div>
@@ -90,6 +90,21 @@
                                         class="mt-1 block w-full"
                                         value="{{ old('jam_keluar_shift', $karyawan->jam_keluar_shift) }}"
                                         required />
+                                </div>
+
+                                {{-- hari libur --}}
+                                <div>
+                                    <x-input-label for="hari_libur" value="Hari Libur Mingguan" />
+                                    <select id="hari_libur" name="hari_libur"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">-- Pilih Hari Libur --</option>
+                                        @foreach (['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'] as $hari)
+                                        <option value="{{ $hari }}" @selected($karyawan->hari_libur == $hari)>
+                                            {{ $hari }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error :messages="$errors->get('hari_libur')" class="mt-2" />
                                 </div>
 
                             </div>

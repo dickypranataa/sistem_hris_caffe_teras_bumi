@@ -40,6 +40,13 @@ class GajiController extends Controller
                 ->where('status', 'Terlambat')
                 ->count();
 
+            // Hitung Total Izin (Diterima)
+            $k->total_izin = \App\Models\Izin::where('user_id', $k->id)
+                ->whereMonth('tanggal_izin', $bulan)
+                ->whereYear('tanggal_izin', $tahun)
+                ->where('status', 'diterima')
+                ->count();
+
             // Cek apakah gaji bulan ini sudah diinput sebelumnya?
             $k->data_gaji = Gaji::where('user_id', $k->id)
                 ->where('bulan', $bulan)
@@ -72,6 +79,7 @@ class GajiController extends Controller
             [
                 'total_hadir' => $request->total_hadir, // Simpan snapshot kehadiran
                 'total_terlambat' => $request->total_terlambat,
+                'total_izin' => $request->total_izin, // Simpan snapshot izin
                 'gaji_bersih' => $request->gaji_bersih,
                 'catatan' => $request->catatan, // Opsional
                 'tanggal_dicetak' => now(),

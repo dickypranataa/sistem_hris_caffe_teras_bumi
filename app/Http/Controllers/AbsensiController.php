@@ -22,10 +22,31 @@ class AbsensiController extends Controller
             ->where('tanggal', $hariIni)
             ->first();
 
+        // Terjemahkan hari ini ke Bahasa Indonesia
+        $hariInggris = date('l');
+        $hariIndoMap = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+        $hariIniIndo = $hariIndoMap[$hariInggris];
+        $isHariLibur = ($user->hari_libur === $hariIniIndo);
+
+        // Cek Izin Diterima Hari Ini
+        $izinHariIni = \App\Models\Izin::where('user_id', $user->id)
+            ->where('tanggal_izin', $hariIni)
+            ->where('status', 'diterima')
+            ->first();
+        $isIzin = ($izinHariIni != null);
+
         // Ambil Setting Kantor (Untuk dikirim ke JS Peta)
         $setting = Pengaturan::first();
 
-        return view('absensi.index', compact('cekAbsen', 'user', 'setting'));
+        return view('absensi.index', compact('cekAbsen', 'user', 'setting', 'isHariLibur', 'isIzin'));
     }
 
     // Proses Simpan Data (Masuk / Pulang)
@@ -39,6 +60,32 @@ class AbsensiController extends Controller
         $setting = Pengaturan::first();
         if (!$setting) {
             return back()->with('error', 'Sistem belum dikonfigurasi oleh Admin!');
+        }
+
+        // Cek Hari Libur
+        $hariInggris = date('l');
+        $hariIndoMap = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+        $hariIniIndo = $hariIndoMap[$hariInggris];
+        if ($user->hari_libur === $hariIniIndo) {
+            return back()->with('error', 'Hari ini adalah hari libur Anda, tidak perlu absen!');
+        }
+
+        // Cek Izin Diterima Hari Ini
+        $izinHariIni = \App\Models\Izin::where('user_id', $user->id)
+            ->where('tanggal_izin', date('Y-m-d'))
+            ->where('status', 'diterima')
+            ->first();
+        
+        if ($izinHariIni) {
+            return back()->with('error', 'Hari ini Anda sedang dalam status Izin yang disetujui, tidak perlu absen!');
         }
 
         // 2. VALIDASI INPUT (Koordinat & Foto wajib ada)

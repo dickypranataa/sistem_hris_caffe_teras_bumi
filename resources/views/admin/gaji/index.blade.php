@@ -65,6 +65,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Karyawan</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Kehadiran</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Total Terlambat</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Izin</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider" width="30%">Input Gaji Bersih (Rp)</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
@@ -96,6 +97,17 @@
                                     @endif
                                 </td>
 
+                                {{-- TOTAL IZIN --}}
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    @if($k->total_izin > 0)
+                                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full">
+                                        {{ $k->total_izin }} Hari
+                                    </span>
+                                    @else
+                                    <span class="text-gray-400 text-xs">-</span>
+                                    @endif
+                                </td>
+
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <form action="{{ route('admin.gaji.store') }}" method="POST" class="flex gap-2">
                                         @csrf
@@ -105,6 +117,7 @@
                                         <input type="hidden" name="tahun" value="{{ $tahun }}">
                                         <input type="hidden" name="total_hadir" value="{{ $k->total_hadir }}">
                                         <input type="hidden" name="total_terlambat" value="{{ $k->total_terlambat }}">
+                                        <input type="hidden" name="total_izin" value="{{ $k->total_izin }}">
 
                                         <div class="relative w-full">
                                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
