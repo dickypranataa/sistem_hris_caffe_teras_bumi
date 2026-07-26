@@ -64,19 +64,26 @@
                                     </div>
                                 </div>
 
-                                {{-- Lat & Long (Readonly) --}}
+                                {{-- Lat & Long (Dapat Diubah) --}}
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Latitude</label>
-                                        <input type="text" name="latitude" id="lat" value="{{ $setting->latitude }}" readonly
-                                            class="w-full rounded-lg border-gray-200 bg-gray-100 text-xs text-gray-500 cursor-not-allowed">
+                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Latitude</label>
+                                        <input type="text" name="latitude" id="lat" value="{{ old('latitude', $setting->latitude) }}" required
+                                            class="w-full rounded-lg border-gray-300 text-xs focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                                        @error('latitude')
+                                            <span class="text-xs text-red-500">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Longitude</label>
-                                        <input type="text" name="longitude" id="long" value="{{ $setting->longitude }}" readonly
-                                            class="w-full rounded-lg border-gray-200 bg-gray-100 text-xs text-gray-500 cursor-not-allowed">
+                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Longitude</label>
+                                        <input type="text" name="longitude" id="long" value="{{ old('longitude', $setting->longitude) }}" required
+                                            class="w-full rounded-lg border-gray-300 text-xs focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                                        @error('longitude')
+                                            <span class="text-xs text-red-500">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
+                                <p class="text-[11px] text-gray-500 mt-1">💡 Anda dapat mengetik koordinat secara manual, mengklik peta, atau menggeser marker biru.</p>
                             </div>
 
                             {{-- SECTION 2: WAKTU --}}
@@ -87,18 +94,18 @@
                                 <div class="bg-green-50 p-3 rounded-xl border border-green-100">
                                     <div class="mb-3">
                                         <label class="block text-xs text-green-800 font-bold mb-1">Buka Absen (Menit sblm shift)</label>
-                                        <input type="number" name="menit_awal_absen_masuk" value="{{ $setting->menit_awal_absen_masuk }}" class="w-full rounded-md border-green-300 text-sm focus:ring-green-500">
+                                        <input type="number" name="menit_awal_absen_masuk" value="{{ old('menit_awal_absen_masuk', $setting->menit_awal_absen_masuk) }}" class="w-full rounded-md border-green-300 text-sm focus:ring-green-500">
                                     </div>
                                     <div>
                                         <label class="block text-xs text-green-800 font-bold mb-1">Toleransi Telat (Menit)</label>
-                                        <input type="number" name="menit_toleransi_terlambat" value="{{ $setting->menit_toleransi_terlambat }}" class="w-full rounded-md border-green-300 text-sm focus:ring-green-500">
+                                        <input type="number" name="menit_toleransi_terlambat" value="{{ old('menit_toleransi_terlambat', $setting->menit_toleransi_terlambat) }}" class="w-full rounded-md border-green-300 text-sm focus:ring-green-500">
                                     </div>
                                 </div>
 
                                 {{-- Pulang --}}
                                 <div class="bg-red-50 p-3 rounded-xl border border-red-100">
                                     <label class="block text-xs text-red-800 font-bold mb-1">Batas Akhir Absen (Menit stlh shift)</label>
-                                    <input type="number" name="menit_maksimal_absen_pulang" value="{{ $setting->menit_maksimal_absen_pulang }}" class="w-full rounded-md border-red-300 text-sm focus:ring-red-500">
+                                    <input type="number" name="menit_maksimal_absen_pulang" value="{{ old('menit_maksimal_absen_pulang', $setting->menit_maksimal_absen_pulang) }}" class="w-full rounded-md border-red-300 text-sm focus:ring-red-500">
                                 </div>
                             </div>
 
@@ -115,7 +122,12 @@
                                         </svg>
                                         Sesuaikan Titik Koordinat
                                     </span>
-                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Geser Marker Biru</span>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" id="btn-get-location" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-lg border border-blue-200 font-semibold transition flex items-center cursor-pointer">
+                                            🎯 Deteksi Lokasi Saya
+                                        </button>
+                                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Klik Map / Geser Marker</span>
+                                    </div>
                                 </div>
                                 <div id="map" class="flex-grow rounded-b-lg w-full" style="min-height: 450px;"></div>
                             </div>
@@ -140,15 +152,19 @@
         </div>
     </div>
 
-    {{-- SCRIPT PETA --}}
+    {{-- SCRIPT PETA INTERAKTIF --}}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
-            // Ambil data dari backend (AMAN DARI CSP)
-            var curLat = parseFloat("{{ $setting->latitude }}");
-            var curLong = parseFloat("{{ $setting->longitude }}");
-            var curRadius = parseFloat("{{ $setting->radius_meter }}");
+            // Elements
+            var latInput = document.getElementById('lat');
+            var longInput = document.getElementById('long');
+            var radiusInput = document.getElementById('radius');
+
+            var curLat = parseFloat(latInput.value) || parseFloat("{{ $setting->latitude }}");
+            var curLong = parseFloat(longInput.value) || parseFloat("{{ $setting->longitude }}");
+            var curRadius = parseFloat(radiusInput.value) || parseFloat("{{ $setting->radius_meter }}");
             var namaKantor = "{{ $setting->nama_kantor }}";
 
             // Inisialisasi Peta
@@ -158,18 +174,90 @@
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // Marker
-            L.marker([curLat, curLong])
+            // Marker Draggable
+            var marker = L.marker([curLat, curLong], { draggable: true })
                 .addTo(map)
-                .bindPopup("<b>" + namaKantor + "</b><br>Pusat Absensi");
+                .bindPopup("<b>" + namaKantor + "</b><br>Geser marker ini untuk mengubah titik lokasi");
 
             // Radius Geofence
-            L.circle([curLat, curLong], {
+            var circle = L.circle([curLat, curLong], {
                 color: 'blue',
                 fillColor: '#3b82f6',
                 fillOpacity: 0.1,
                 radius: curRadius
             }).addTo(map);
+
+            // Function update posisi marker & circle
+            function updateMapPosition(lat, lng) {
+                var newLatLng = new L.LatLng(lat, lng);
+                marker.setLatLng(newLatLng);
+                circle.setLatLng(newLatLng);
+                map.panTo(newLatLng);
+            }
+
+            // Function update input text
+            function updateInputs(lat, lng) {
+                latInput.value = lat.toFixed(7);
+                longInput.value = lng.toFixed(7);
+            }
+
+            // Event Marker Dragged
+            marker.on('dragend', function(e) {
+                var position = marker.getLatLng();
+                circle.setLatLng(position);
+                updateInputs(position.lat, position.lng);
+            });
+
+            // Event Click Map
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                circle.setLatLng(e.latlng);
+                updateInputs(e.latlng.lat, e.latlng.lng);
+            });
+
+            // Event Manual Input Lat & Long
+            function handleManualInput() {
+                var inputLat = parseFloat(latInput.value);
+                var inputLng = parseFloat(longInput.value);
+                if (!isNaN(inputLat) && !isNaN(inputLng)) {
+                    updateMapPosition(inputLat, inputLng);
+                }
+            }
+
+            latInput.addEventListener('input', handleManualInput);
+            longInput.addEventListener('input', handleManualInput);
+
+            // Event Input Radius
+            if (radiusInput) {
+                radiusInput.addEventListener('input', function() {
+                    var r = parseFloat(this.value);
+                    if (!isNaN(r) && r > 0) {
+                        circle.setRadius(r);
+                    }
+                });
+            }
+
+            // Button Deteksi Lokasi Saya
+            var btnGetLocation = document.getElementById('btn-get-location');
+            if (btnGetLocation) {
+                btnGetLocation.addEventListener('click', function() {
+                    if (navigator.geolocation) {
+                        btnGetLocation.textContent = "⌛ Mengambil lokasi...";
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            var myLat = position.coords.latitude;
+                            var myLng = position.coords.longitude;
+                            updateMapPosition(myLat, myLng);
+                            updateInputs(myLat, myLng);
+                            btnGetLocation.textContent = "🎯 Deteksi Lokasi Saya";
+                        }, function(error) {
+                            alert("Gagal mendapatkan lokasi GPS: " + error.message);
+                            btnGetLocation.textContent = "🎯 Deteksi Lokasi Saya";
+                        });
+                    } else {
+                        alert("Browser Anda tidak mendukung Geolocation.");
+                    }
+                });
+            }
 
         });
     </script>
