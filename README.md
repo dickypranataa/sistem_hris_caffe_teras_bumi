@@ -1,59 +1,105 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem HRIS Caffe Teras Bumi
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem HRIS sederhana untuk manajemen kehadiran (absensi), permohonan izin, dan penggajian karyawan di Caffe Teras Bumi. Aplikasi ini dibuat dengan Laravel dan ditujukan untuk digunakan oleh Manajer (Admin) dan Karyawan.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur Utama (ringkas)
+- Absensi (Kehadiran)
+  - Absen masuk & pulang menggunakan foto (webcam) dan lokasi (GPS).
+  - Geofencing: hanya memperbolehkan absen di radius kantor yang ditentukan.
+  - Cek hari libur pribadi dan pengecekan izin yang sudah disetujui.
+  - Riwayat absensi per karyawan.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Izin (Cuti / Surat)
+  - Karyawan mengunggah surat izin (PDF).
+  - Status: pending → diterima / ditolak oleh Admin.
+  - Admin dapat meninjau dan memutuskan permohonan izin.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Penggajian (Gaji)
+  - Manajer dapat menghitung dan menyimpan data gaji per bulan.
+  - Sistem menyimpan snapshot: total hadir, total terlambat, total izin, dan gaji bersih.
+  - Cetak slip gaji ke PDF (untuk manajer dan untuk karyawan secara pribadi).
 
-## Learning Laravel
+- Profil Pengguna
+  - Karyawan dapat melihat dan mengubah data profilnya (nama, kontak, dsb).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- Panel Admin (Manajer)
+  - Dashboard admin.
+  - Manajemen data karyawan (CRUD).
+  - Pengaturan sistem terkait absensi (lokasi kantor, radius, toleransi waktu, dsb).
+  - Melihat & memproses permohonan izin serta input/rekap gaji.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Stack & Teknologi
+- Bahasa: PHP (Laravel) + Blade (template) + sedikit JavaScript
+- Framework: Laravel
+- Frontend tooling: Tailwind CSS, Vite
+- PDF: barryvdh/laravel-dompdf (untuk cetak slip gaji)
+- Testing: PHPUnit (konfigurasi ada di phpunit.xml)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Struktur Penting (ringkasan)
+- app/
+  - Http/Controllers/ — AbsensiController, IzinController, GajiController, AdminController, ProfileController
+  - Models/ — Absensi.php, Izin.php, Gaji.php, Pengaturan.php, User.php
+  - View/Components/ — komponen Blade (jika ada)
+- routes/
+  - web.php — rute utama (absensi, admin, izin, gaji, profile)
+  - auth.php — rute otentikasi (Breeze)
+- resources/views/ — tampilan Blade
+- database/ — migrations / seeders
+- storage/ — penyimpanan foto & file surat
+- tailwind.config.js, vite.config.js, package.json, composer.json
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## Ringkasan Rute Penting
+(akses memerlukan autentikasi sesuai peran)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Umum
+  - GET  / → halaman welcome
+  - GET  /dashboard → redirect ke dashboard sesuai role
 
-## Code of Conduct
+- Admin / Manajer (prefix: /admin, middleware auth)
+  - GET  /admin/dashboard → Admin dashboard
+  - GET  /admin/karyawan → daftar karyawan
+  - GET  /admin/karyawan/create → form tambah karyawan
+  - POST /admin/karyawan → simpan karyawan
+  - GET  /admin/karyawan/{id}/edit → form edit karyawan
+  - PUT  /admin/karyawan/{id} → update karyawan
+  - DELETE /admin/karyawan/{id} → hapus karyawan
+  - GET  /admin/gaji → input/rekap gaji
+  - POST /admin/gaji → simpan gaji (updateOrCreate)
+  - GET  /admin/gaji/cetak/{id} → cetak slip gaji (PDF)
+  - GET  /admin/pengaturan → lihat pengaturan absensi
+  - GET  /admin/pengaturan/edit → edit pengaturan
+  - PUT  /admin/pengaturan → simpan pengaturan
+  - GET  /admin/izin → lihat semua pengajuan izin
+  - POST /admin/izin/{id}/terima → terima izin
+  - POST /admin/izin/{id}/tolak → tolak izin
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Karyawan (prefix: /absensi, middleware auth)
+  - GET  /absensi → halaman absen (kamera + peta)
+  - POST /absensi/store → proses absen masuk / pulang (base64 foto + lokasi)
+  - GET  /absensi/history → riwayat absensi
+  - GET  /absensi/gaji-saya → riwayat gaji saya
+  - GET  /absensi/gaji-saya/cetak/{id} → cetak slip gaji saya (download PDF)
+  - GET  /absensi/izin → daftar pengajuan izin saya
+  - GET  /absensi/izin/create → form pengajuan izin
+  - POST /absensi/izin → kirim pengajuan izin (upload PDF)
 
-## Security Vulnerabilities
+- Profil
+  - GET/PATCH/DELETE /profile → edit / update / hapus profile (Breeze)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Cara Menjalankan (development) — langkah cepat
+Kebutuhan: PHP, Composer, Node.js, NPM, database (MySQL/MariaDB)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Clone repository
+```bash
+git clone https://github.com/dickypranataa/sistem_hris_caffe_teras_bumi.git
+cd sistem_hris_caffe_teras_bumi
